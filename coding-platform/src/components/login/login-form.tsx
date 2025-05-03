@@ -4,6 +4,7 @@ import type React from "react";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { login } from "@/redux/features/auth/authSlice";
+import type { AppDispatch } from "@/redux/store";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -21,6 +24,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
 
   const isFormValid = email.includes("@") && password.length >= 6;
 
@@ -29,25 +33,17 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("https://reqres.in/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const resultAction = await dispatch(login({ email, password }));
 
-      const data = await response.json();
+      if (login.fulfilled.match(resultAction)) {
+        // showToast("Login successful! Redirecting to challenges...", "success");
 
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-
-        router.push("/challenges");
-      } else {
-        //error
+        setTimeout(() => {
+          router.push("/challenges");
+        }, 1000);
+      } else if (login.rejected.match(resultAction)) {
       }
     } catch (error) {
-      //error
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +74,7 @@ export default function LoginForm() {
                 placeholder="email@address.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 bg-white  border-gray-500"
+                className="pl-10 bg-white border-gray-500"
                 required
               />
             </div>
@@ -104,16 +100,16 @@ export default function LoginForm() {
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4 " />
+                  <EyeOff className="h-4 w-4" />
                 ) : (
-                  <Eye className="h-4 w-4 " />
+                  <Eye className="h-4 w-4" />
                 )}
               </button>
             </div>
           </div>
           <Button
             type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-600 cursor-pointer text-white"
+            className="w-full bg-purple-600 hover:bg-purple-700 cursor-pointer text-white"
             disabled={!isFormValid || isLoading}
           >
             {isLoading ? "Signing in..." : "Sign in"}
