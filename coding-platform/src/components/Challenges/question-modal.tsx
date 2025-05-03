@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { markQuestionCompleted } from "@/redux/features/challenges/challengesSlice";
 import type { AppDispatch } from "@/redux/store";
 import type { Question } from "@/types";
+import { toast } from "sonner";
 
 interface QuestionModalProps {
   question: Question;
@@ -82,13 +83,10 @@ export default function QuestionModal({
         selectedAnswer: selectedOption,
       })
     );
+    toast.success("Question Completed!", {
+      description: `Time spent: ${formatTime(timeSpent)}`,
+    });
 
-    // toast({
-    //   title: "Question Completed!",
-    //   description: `You spent ${formatTime(timeSpent)} on this question.`,
-    // })
-
-    // Close modal
     onClose();
   };
 
