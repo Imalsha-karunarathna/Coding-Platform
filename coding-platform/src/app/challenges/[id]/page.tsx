@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { ArrowLeft, UserCircle2Icon } from "lucide-react";
@@ -13,7 +13,12 @@ import QuestionModal from "@/components/Challenges/question-modal";
 import ProgressBar from "@/components/Challenges/progress-bar";
 import type { Question } from "@/types";
 
-export default function ChallengePage({ params }: { params: { id: string } }) {
+export default function ChallengePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = React.use(params);
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { selectedChallenge, loading, error, completionState } = useSelector(
@@ -24,10 +29,10 @@ export default function ChallengePage({ params }: { params: { id: string } }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    if (params.id) {
-      dispatch(fetchChallengeById(params.id));
+    if (id) {
+      dispatch(fetchChallengeById(id));
     }
-  }, [dispatch, params.id]);
+  }, [dispatch, id]);
 
   const getCompletedQuestions = () => {
     if (!selectedChallenge?.questions) return 0;

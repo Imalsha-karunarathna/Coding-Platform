@@ -22,6 +22,7 @@ export default function ChallengeCard({
   const isCompleted = challenge.questions?.every(
     (q) => completionState[q.id]?.completed
   );
+
   return (
     <Card className="h-full flex flex-col border-2">
       <CardHeader className="pb-2">

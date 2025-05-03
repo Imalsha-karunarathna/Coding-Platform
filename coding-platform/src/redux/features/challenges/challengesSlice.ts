@@ -16,6 +16,7 @@ interface ChallengesState {
   language: string | null;
   difficulty: string | null;
   completionState: CompletionState;
+  timeTracking: Record<string, number>;
 }
 
 interface FetchChallengesParams {
@@ -152,6 +153,7 @@ const initialState: ChallengesState = {
   language: null,
   difficulty: null,
   completionState: loadCompletionState(),
+  timeTracking: {},
 };
 
 const challengesSlice = createSlice({

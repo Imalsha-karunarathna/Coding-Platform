@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchChallenges } from "@/redux/features/challenges/challengesSlice";
@@ -9,6 +9,7 @@ import ChallengeFilters from "@/components/Challenges/challenge-filters";
 import ChallengeList from "@/components/Challenges/challenge-list";
 import Pagination from "@/components/Challenges/pagination";
 import { UserCircle2Icon } from "lucide-react";
+import CompletedChallengesModal from "@/components/Challenges/completed-challenges-drawer";
 
 export default function ChallengesPage() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function ChallengesPage() {
     completionState,
   } = useSelector((state: RootState) => state.challenges);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     if (
       typeof window !== "undefined" &&
@@ -54,6 +56,11 @@ export default function ChallengesPage() {
     ).length;
   };
 
+  const getCompletedChallenges = () => {
+    return challenges.filter((challenge) =>
+      challenge.questions?.every((q) => completionState[q.id]?.completed)
+    );
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
@@ -70,6 +77,7 @@ export default function ChallengesPage() {
                   clipPath:
                     "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)",
                 }}
+                onClick={() => setIsModalOpen(true)}
               >
                 {getCompletedChallengesCount()}
               </div>
@@ -116,6 +124,13 @@ export default function ChallengesPage() {
           </>
         )}
       </main>
+      {isModalOpen && (
+        <CompletedChallengesModal
+          challenges={getCompletedChallenges()}
+          onClose={() => setIsModalOpen(false)}
+          completionState={completionState}
+        />
+      )}
     </div>
   );
 }

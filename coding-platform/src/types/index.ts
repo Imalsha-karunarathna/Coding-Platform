@@ -8,6 +8,7 @@ export interface Challenge {
   instructions?: string;
   points?: number;
   questions?: Question[];
+  completionTime?: number;
 }
 
 export interface Question {

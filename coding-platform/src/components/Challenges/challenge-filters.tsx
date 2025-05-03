@@ -38,12 +38,8 @@ export default function ChallengeFilters() {
   };
 
   const handleDifficultyChange = (value: string) => {
-    dispatch(setDifficulty(value === "all" ? null : value));
+    dispatch(setDifficulty(value === "all" ? null : value.toUpperCase()));
     dispatch(setPage(1));
-  };
-
-  const handleReset = () => {
-    dispatch(clearFilters());
   };
 
   return (
